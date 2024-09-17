@@ -23,6 +23,7 @@ COPY configs/ups.conf /etc/nut/ups.conf
 COPY configs/upsd.conf /etc/nut/upsd.conf
 COPY configs/upsd.users /etc/nut/upsd.users
 COPY configs/upsmon.conf /etc/nut/upsmon.conf
+COPY configs/main.cf /etc/postfix/main.cf
 COPY scripts/wol.sh /opt/scripts/wol.sh
 COPY configs/wol_clients.conf /opt/scripts/wol_clients.conf
 
