@@ -10,9 +10,11 @@ RUN apt-get update && \
     apt-get install -y nut nut-cgi nginx-light fcgiwrap postfix mailutils curl etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /opt/scripts/configs && \
+    mkdir -p /opt/scripts/configs /run/nut && \
+    chown nut:nut /run/nut && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
+
 
 # Define exposed Ports
 EXPOSE 3493/tcp 80/tcp
