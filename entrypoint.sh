@@ -3,6 +3,8 @@
 # Function to start NUT server
 start_nut_server() {
     echo "Starting NUT server..."
+    mkdir -p /run/nut
+    chown nut:nut /run/nut
     /usr/sbin/upsd
 }
 
@@ -15,7 +17,7 @@ start_nut_monitor() {
 # Function to start NGINX
 start_nginx() {
     echo "Starting NGINX..."
-    exec nginx
+    nginx
 }
 
 # Function to start Postfix
