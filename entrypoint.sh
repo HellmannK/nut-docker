@@ -15,7 +15,7 @@ start_nut_monitor() {
 # Function to start NGINX
 start_nginx() {
     echo "Starting NGINX..."
-    nginx
+    exec nginx
 }
 
 # Function to start Postfix
