@@ -17,7 +17,7 @@ start_nut_monitor() {
 # Function to start NGINX
 start_nginx() {
     echo "Starting NGINX..."
-    nginx
+    nginx -g 'daemon off;'
 }
 
 # Function to start Postfix
@@ -26,12 +26,18 @@ start_postfix() {
     /etc/init.d/postfix start
 }
 
+# Function to start fcgiwrap
+start_fcgiwrap() {
+    echo "Starting fcgiwrap..."
+    /usr/sbin/fcgiwrap -s unix:/var/run/fcgiwrap.socket &
+}
+
 # Function to monitor UPS and trigger WOL script
 monitor_ups() {
     echo "Monitoring UPS status..."
     while true; do
         # Check the status of the UPS
-        STATUS=$(upsc ups@localhost ups.status)
+        STATUS=$(upsc ups@localhost ups.status || echo "UNKNOWN")
         
         # If mains is back, execute WOL script
         if [ "$STATUS" == "OL" ]; then
@@ -47,35 +53,14 @@ monitor_ups() {
 # Ensure configuration files are in place
 CONFIGS_DIR="/opt/scripts/configs"
 
-if [ ! -f "$CONFIGS_DIR/nginx.conf" ]; then
-    echo "nginx.conf not found!"
-    exit 1
-fi
+required_configs=("nginx.conf" "ups.conf" "upsd.conf" "upsd.users" "upsmon.conf" "wol_clients.conf")
 
-if [ ! -f "$CONFIGS_DIR/ups.conf" ]; then
-    echo "ups.conf not found!"
-    exit 1
-fi
-
-if [ ! -f "$CONFIGS_DIR/upsd.conf" ]; then
-    echo "upsd.conf not found!"
-    exit 1
-fi
-
-if [ ! -f "$CONFIGS_DIR/upsd.users" ]; then
-    echo "upsd.users not found!"
-    exit 1
-fi
-
-if [ ! -f "$CONFIGS_DIR/upsmon.conf" ]; then
-    echo "upsmon.conf not found!"
-    exit 1
-fi
-
-if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
-    echo "wol_clients.conf not found!"
-    exit 1
-fi
+for config in "${required_configs[@]}"; do
+    if [ ! -f "$CONFIGS_DIR/$config" ]; then
+        echo "$config not found!"
+        exit 1
+    fi
+done
 
 # Copy configuration files from the volume to their respective locations
 cp "$CONFIGS_DIR/nginx.conf" /etc/nginx/nginx.conf
@@ -94,11 +79,11 @@ nut-scanner -U > /etc/nut/nut-scanner-output.txt
 # Start all services
 start_nut_server
 start_nut_monitor
-start_nginx
 start_postfix
+start_fcgiwrap
 
 # Start UPS monitoring in the background
 monitor_ups &
 
-# Keep the container running
-tail -f /dev/null
+# Start NGINX (this will keep the script running)
+start_nginx
