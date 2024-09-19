@@ -7,7 +7,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the package list and install NUT and Apache
 RUN apt-get update && \
-    apt-get install -y nut nut-cgi nginx-light fcgiwrap postfix mailutils curl etherwake && \
+    apt-get install -y --no-install-recommends \
+        nut \
+        nut-cgi \
+        nginx-light \
+        fcgiwrap \
+        postfix \
+        mailutils \
+        curl \
+        etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /opt/scripts/configs /run/nut && \
