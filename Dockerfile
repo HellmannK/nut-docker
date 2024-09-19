@@ -14,11 +14,10 @@ RUN apt-get update && \
         fcgiwrap \
         postfix \
         mailutils \
-        curl \
         etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /opt/scripts/configs /run/nut && \
+    mkdir -p /run/nut /opt/scripts/configs && \
     chown nut:nut /run/nut && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
@@ -26,26 +25,21 @@ RUN apt-get update && \
 # Define exposed Ports
 EXPOSE 3493/tcp 9090/tcp
 
-# Copy configuration for NUT, NUT-CGI, POSTFIX, and NGINX
-COPY configs/nginx.conf /etc/nginx/nginx.conf
-COPY configs/hosts.conf /etc/nut/hosts.conf
-COPY configs/nut.conf /etc/nut/nut.conf
-COPY configs/ups.conf /etc/nut/ups.conf
-COPY configs/upsd.conf /etc/nut/upsd.conf
-COPY configs/upsd.users /etc/nut/upsd.users
-COPY configs/upsmon.conf /etc/nut/upsmon.conf
-COPY configs/main.cf /etc/postfix/main.cf
+# Copy static scripts
 COPY scripts/wol.sh /opt/scripts/wol.sh
-COPY configs/wol_clients.conf /opt/scripts/wol_clients.conf
-
-# Adjust permissions to avoid world-readable warnings
-RUN chmod 640 /etc/nut/upsd.conf /etc/nut/upsd.users
-
-# Copy entrypoint script into the container
 COPY entrypoint.sh /usr/local/bin/
+
+# Copy initial config for wol
+COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
 
 # Make scripts executable
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
+
+# Adjust permissions to avoid world-readable warnings
+RUN chmod 640 /opt/scripts/configs/upsd.conf /opt/scripts/configs/upsd.users
+
+# Define volumes to hold configuration files
+VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts"]
 
 # Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

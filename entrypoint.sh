@@ -45,30 +45,51 @@ monitor_ups() {
 }
 
 # Ensure configuration files are in place
-if [ ! -f /etc/nginx/nginx.conf ]; then
+CONFIGS_DIR="/opt/scripts/configs"
+
+if [ ! -f "$CONFIGS_DIR/nginx.conf" ]; then
     echo "nginx.conf not found!"
     exit 1
 fi
 
-if [ ! -f /etc/nut/ups.conf ]; then
+if [ ! -f "$CONFIGS_DIR/ups.conf" ]; then
     echo "ups.conf not found!"
     exit 1
 fi
 
-if [ ! -f /etc/nut/upsd.conf ]; then
+if [ ! -f "$CONFIGS_DIR/upsd.conf" ]; then
     echo "upsd.conf not found!"
     exit 1
 fi
 
-if [ ! -f /etc/nut/upsd.users ]; then
+if [ ! -f "$CONFIGS_DIR/upsd.users" ]; then
     echo "upsd.users not found!"
     exit 1
 fi
 
-if [ ! -f /etc/nut/upsmon.conf ]; then
+if [ ! -f "$CONFIGS_DIR/upsmon.conf" ]; then
     echo "upsmon.conf not found!"
     exit 1
 fi
+
+if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
+    echo "wol_clients.conf not found!"
+    exit 1
+fi
+
+# Copy configuration files from the volume to their respective locations
+cp "$CONFIGS_DIR/nginx.conf" /etc/nginx/nginx.conf
+cp "$CONFIGS_DIR/hosts.conf" /etc/nut/hosts.conf
+cp "$CONFIGS_DIR/nut.conf" /etc/nut/nut.conf
+cp "$CONFIGS_DIR/ups.conf" /etc/nut/ups.conf
+cp "$CONFIGS_DIR/upsd.conf" /etc/nut/upsd.conf
+cp "$CONFIGS_DIR/upsd.users" /etc/nut/upsd.users
+cp "$CONFIGS_DIR/upsmon.conf" /etc/nut/upsmon.conf
+cp "$CONFIGS_DIR/main.cf" /etc/postfix/main.cf
+cp "$CONFIGS_DIR/wol_clients.conf" /opt/scripts/wol_clients.conf
+
+# Generate a file with the output of nut-scanner -U
+nut-scanner -U > /etc/nut/nut-scanner-output.txt
 
 # Start all services
 start_nut_server
