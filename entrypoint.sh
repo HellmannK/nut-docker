@@ -44,6 +44,32 @@ monitor_ups() {
     done
 }
 
+# Ensure configuration files are in place
+if [ ! -f /etc/nginx/nginx.conf ]; then
+    echo "nginx.conf not found!"
+    exit 1
+fi
+
+if [ ! -f /etc/nut/ups.conf ]; then
+    echo "ups.conf not found!"
+    exit 1
+fi
+
+if [ ! -f /etc/nut/upsd.conf ]; then
+    echo "upsd.conf not found!"
+    exit 1
+fi
+
+if [ ! -f /etc/nut/upsd.users ]; then
+    echo "upsd.users not found!"
+    exit 1
+fi
+
+if [ ! -f /etc/nut/upsmon.conf ]; then
+    echo "upsmon.conf not found!"
+    exit 1
+fi
+
 # Start all services
 start_nut_server
 start_nut_monitor
