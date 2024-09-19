@@ -35,9 +35,6 @@ COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
 # Make scripts executable
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
 
-# Adjust permissions to avoid world-readable warnings
-RUN chmod 640 /opt/scripts/configs/upsd.conf /opt/scripts/configs/upsd.users
-
 # Define volumes to hold configuration files
 VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts"]
 
