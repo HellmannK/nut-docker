@@ -3,8 +3,6 @@
 # Function to start NUT server
 start_nut_server() {
     echo "Starting NUT server..."
-    mkdir -p /run/nut
-    chown nut:nut /run/nut
     /usr/sbin/upsd
 }
 
