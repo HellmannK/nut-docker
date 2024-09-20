@@ -17,8 +17,9 @@ RUN apt-get update && \
         etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /run/nut /opt/scripts/configs && \
+    mkdir -p /run/nut /opt/scripts/configs /run/fcgiwrap && \
     chown nut:nut /run/nut && \
+    chown www-data:www-data /run/fcgwrap && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
