@@ -24,7 +24,7 @@ RUN apt-get update && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Define exposed Ports
-EXPOSE 3493/tcp 9090/tcp
+EXPOSE 3493/tcp 9095/tcp
 
 # Copy static scripts
 COPY scripts/wol.sh /opt/scripts/wol.sh
