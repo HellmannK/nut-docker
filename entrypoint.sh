@@ -55,8 +55,9 @@ required_configs=("nginx.conf" "ups.conf" "upsd.conf" "upsd.users" "upsmon.conf"
 
 for config in "${required_configs[@]}"; do
     if [ ! -f "$CONFIGS_DIR/$config" ]; then
-        echo "$config not found!"
-        exit 1
+        echo "$config not found! Creating a default config..."
+        # Create a default config if it doesn't exist
+        touch "$CONFIGS_DIR/$config"
     fi
 done
 
@@ -71,9 +72,6 @@ cp "$CONFIGS_DIR/upsmon.conf" /etc/nut/upsmon.conf
 cp "$CONFIGS_DIR/main.cf" /etc/postfix/main.cf
 cp "$CONFIGS_DIR/wol_clients.conf" /opt/scripts/wol_clients.conf
 
-# Generate a file with the output of nut-scanner -U
-nut-scanner -U > /etc/nut/nut-scanner-output.txt
-
 # Start all services
 start_nut_server
 start_nut_monitor
@@ -85,3 +83,6 @@ monitor_ups &
 
 # Start NGINX (this will keep the script running)
 start_nginx
+
+# Generate a file with the output of nut-scanner -U
+nut-scanner -U > /etc/nut/nut-scanner-output.txt
