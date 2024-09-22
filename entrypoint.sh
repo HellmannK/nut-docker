@@ -49,19 +49,13 @@ monitor_ups() {
 }
 
 # Ensure WOL configuration files are in place
-CONFIGS_DIR="configs"
-
-# Copy WOL configuration files from the mounted volume to their respective locations
-cp "$CONFIGS_DIR/wol_clients.conf" /opt/scripts/wol_clients.conf
-cp "$SCRIPTS_DIR/wol.sh" /opt/scripts/wol.sh
+CONFIGS_DIR="/opt/scripts/configs"
+SCRIPTS_DIR="/opt/scripts"
 
 if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
     echo "wol_clients.conf not found! Exiting..."
     exit 1
 fi
-
-# Ensure WOL script files are in place
-SCRIPTS_DIR="scripts"
 
 if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
     echo "wol.sh not found! Exiting..."
