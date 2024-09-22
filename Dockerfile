@@ -37,7 +37,7 @@ COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
 
 # Define volumes to hold configuration files
-VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts"]
+VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix"]
 
 # Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
