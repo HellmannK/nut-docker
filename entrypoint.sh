@@ -48,29 +48,20 @@ monitor_ups() {
     done
 }
 
-# Ensure configuration files are in place
+# Ensure WOL configuration files are in place
 CONFIGS_DIR="/opt/scripts/configs"
 
-required_configs=("nginx.conf" "ups.conf" "upsd.conf" "upsd.users" "upsmon.conf" "wol_clients.conf")
+if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
+    echo "wol_clients.conf not found! Exiting..."
+    exit 1
+fi
 
-for config in "${required_configs[@]}"; do
-    if [ ! -f "$CONFIGS_DIR/$config" ]; then
-        echo "$config not found! Creating a default config..."
-        # Create a default config if it doesn't exist
-        touch "$CONFIGS_DIR/$config"
-    fi
-done
-
-# Copy configuration files from the volume to their respective locations
-cp "$CONFIGS_DIR/nginx.conf" /etc/nginx/nginx.conf
-cp "$CONFIGS_DIR/hosts.conf" /etc/nut/hosts.conf
-cp "$CONFIGS_DIR/nut.conf" /etc/nut/nut.conf
-cp "$CONFIGS_DIR/ups.conf" /etc/nut/ups.conf
-cp "$CONFIGS_DIR/upsd.conf" /etc/nut/upsd.conf
-cp "$CONFIGS_DIR/upsd.users" /etc/nut/upsd.users
-cp "$CONFIGS_DIR/upsmon.conf" /etc/nut/upsmon.conf
-cp "$CONFIGS_DIR/main.cf" /etc/postfix/main.cf
+# Copy WOL configuration files from the mounted volume to their respective locations
 cp "$CONFIGS_DIR/wol_clients.conf" /opt/scripts/wol_clients.conf
+cp "$CONFIGS_DIR/wol.sh" /opt/scripts/wol.sh
+
+# Generate a file with the output of nut-scanner -U
+nut-scanner -U > /etc/nut/nut-scanner-output.txt
 
 # Start all services
 start_nut_server
@@ -83,6 +74,3 @@ monitor_ups &
 
 # Start NGINX (this will keep the script running)
 start_nginx
-
-# Generate a file with the output of nut-scanner -U
-nut-scanner -U > /etc/nut/nut-scanner-output.txt
