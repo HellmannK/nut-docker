@@ -18,6 +18,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /run/nut /opt/scripts/configs /var/run/fcgiwrap && \
+    touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
     chown www-data:www-data /var/run/fcgiwrap && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -37,7 +38,7 @@ COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
 
 # Define volumes to hold configuration files
-VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts", "/opt/scripts/configs"]
+VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts/configs"]
 
 # Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
