@@ -52,13 +52,17 @@ monitor_ups() {
 CONFIGS_DIR="/opt/scripts/configs"
 SCRIPTS_DIR="/opt/scripts"
 
+echo "Checking for WOL configuration files..."
+
 if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
-    echo "wol_clients.conf not found! Exiting..."
+    echo "wol_clients.conf not found in $CONFIGS_DIR! Exiting..."
+    ls -l $CONFIGS_DIR
     exit 1
 fi
 
 if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
-    echo "wol.sh not found! Exiting..."
+    echo "wol.sh not found in $SCRIPTS_DIR! Exiting..."
+    ls -l $SCRIPTS_DIR
     exit 1
 fi
 
