@@ -57,10 +57,10 @@ if [ ! -f "$CONFIGS_DIR/wol_clients.conf" ]; then
     exit 1
 fi
 
-if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
-    echo "wol.sh not found! Exiting..."
-    exit 1
-fi
+#if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
+#    echo "wol.sh not found! Exiting..."
+#    exit 1
+#fi
 
 # Generate a file with the output of nut-scanner -U
 nut-scanner -U > /etc/nut/nut-scanner-output.txt

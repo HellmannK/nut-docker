@@ -19,6 +19,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /run/nut /opt/scripts/configs /var/run/fcgiwrap && \
     touch /etc/nut/nut-scanner-output.txt && \
+    chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
     chown www-data:www-data /var/run/fcgiwrap && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
