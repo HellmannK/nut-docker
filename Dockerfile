@@ -23,8 +23,6 @@ RUN apt-get update && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
     chown www-data:www-data /var/run/fcgiwrap && \
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
