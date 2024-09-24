@@ -64,17 +64,18 @@ if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
     exit 1
 fi
 
-# Temporarily copy /etc/nut contents before mounting
-TEMP_DIR="/tmp/nut"
-mkdir -p "$TEMP_DIR"
-cp -r /etc/nut/* "$TEMP_DIR"
+# Check if /etc/nut files exist, and copy them from /tmp/nut if they don't
+files=( hosts.conf nut.conf  ups.conf	upsd.conf  upsd.users  upsmon.conf  upssched.conf  upsset.conf	upsstats-single.html  upsstats.html )
 
-# Copy /etc/nut to the target directory if it is empty
-TARGET_DIR="/home/admin/podman_volumes/nut-cgi-server/nut"
-if [ -d "$TARGET_DIR" ] && [ -z "$(ls -A "$TARGET_DIR")" ]; then
-  echo "Target directory is empty. Copying contents of /etc/nut to $TARGET_DIR"
-  cp -r "$TEMP_DIR"/* "$TARGET_DIR"
-fi
+for i in "${files[@]}"
+  do
+    if [ ! -f /etc/nut/$i ]; then
+      cp /tmp/nut/$i /etc/nut/$i \
+      && echo "No existing $i found"
+    else
+      echo "Existing $i found, and will be used"
+    fi
+  done
 
 # Generate a file with the output of nut-scanner -U
 nut-scanner -U > /etc/nut/nut-scanner-output.txt

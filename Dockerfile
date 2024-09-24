@@ -19,11 +19,12 @@ RUN apt-get update && \
     etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /opt/scripts/configs && \
+    mkdir -p /opt/scripts/configs /tmp/nut && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
-    chown www-data:www-data /etc/nut/upsset.conf
+    chown www-data:www-data /etc/nut/upsset.conf && \
+    mv /etc/nut/* /tmp/nut
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
