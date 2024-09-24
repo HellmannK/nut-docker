@@ -18,9 +18,7 @@ RUN apt-get update && \
     etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir /opt/scripts && \
-    mkdir /opt/scripts/configs && \
-    mkdir /var/run/fcgiwrap && \
+    mkdir -p /opt/scripts/configs  && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
@@ -32,18 +30,15 @@ RUN apt-get update && \
 EXPOSE 3493/tcp 9095/tcp
 
 # Copy static scripts
-COPY scripts/wol.sh /opt/scripts/wol.sh
+COPY wol.sh /opt/scripts/wol.sh
 COPY entrypoint.sh /usr/local/bin/
 
 # Copy configs
-COPY configs/nginx.conf /etc/nginx/nginx.conf
-COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY wol_clients.conf /opt/scripts/configs/wol_clients.conf
 
 # Make scripts executable
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
-
-# Define volumes to hold configuration files
-VOLUME ["/etc/nginx", "/etc/nut", "/etc/postfix", "/opt/scripts/configs"]
 
 # Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
