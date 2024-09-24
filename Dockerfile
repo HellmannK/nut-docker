@@ -13,16 +13,16 @@ RUN apt-get update && \
     nut-cgi \
     nginx \
     fcgiwrap \
+    spawn-fcgi \
     postfix \
     mailutils \
     etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /opt/scripts/configs /var/run/fcgiwrap && \
+    mkdir -p /opt/scripts/configs && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
-    chown www-data:www-data /var/run/fcgiwrap
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
