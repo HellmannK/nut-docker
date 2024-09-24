@@ -23,6 +23,7 @@ RUN apt-get update && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
+    chown www-data:www-data /etc/nut/upsset.conf
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
