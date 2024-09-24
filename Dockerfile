@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     nut \
     nut-cgi \
-    nginx-light \
+    nginx \
     fcgiwrap \
     postfix \
     mailutils \
@@ -32,6 +32,10 @@ EXPOSE 3493/tcp 9095/tcp
 # Copy static scripts
 COPY scripts/wol.sh /opt/scripts/wol.sh
 COPY entrypoint.sh /usr/local/bin/
+
+# Copy configs
+COPY configs/nginx.conf /etc/nginx/nginx.conf
+COPY configs/wol_clients.conf /opt/scripts/configs/wol_clients.conf
 
 # Make scripts executable
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
