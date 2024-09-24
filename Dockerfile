@@ -18,7 +18,6 @@ RUN apt-get update && \
     etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir run/nut && \
     mkdir /opt/scripts && \
     mkdir /opt/scripts/configs && \
     mkdir /var/run/fcgiwrap && \
