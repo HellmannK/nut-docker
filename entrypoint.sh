@@ -30,6 +30,12 @@ start_fcgiwrap() {
     /etc/init.d/fcgiwrap start
 }
 
+# Function to start nut-driver
+start_upsdrvctl() {
+    echo "Starting upsdrvctl"
+    upsdrvctl start
+}
+
 # Check if USB_DEVICE environment variable is set
 if [ -z "$USB_DEVICE" ]; then
   echo "Error: USB_DEVICE environment variable is not set."
@@ -65,7 +71,7 @@ if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
 fi
 
 # Check if /etc/nut files exist, and copy them from /tmp/nut if they don't
-files=( hosts.conf nut.conf  ups.conf	upsd.conf  upsd.users  upsmon.conf  upssched.conf  upsset.conf	upsstats-single.html  upsstats.html )
+files=( hosts.conf nut.conf ups.conf upsd.conf upsd.users upsmon.conf upssched.conf upsset.conf	upsstats-single.html upsstats.html )
 
 for i in "${files[@]}"
   do
@@ -80,12 +86,12 @@ for i in "${files[@]}"
 # Generate a file with the output of nut-scanner -U
 nut-scanner -U > /etc/nut/nut-scanner-output.txt
 
-# Start all services
+# Start services
 start_nut_server
 start_nut_monitor
 start_postfix
 start_fcgiwrap
-upsdrvctl start
+start_upsdrvctl
 
 # Start NGINX (this will keep the script running)
 start_nginx
