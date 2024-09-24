@@ -1,9 +1,10 @@
 # Networkupstools "nut" with mail-notification, nut-cgi and wol
 FROM debian:bookworm
-LABEL Karim Ellmann, Mirko Schimkat
+LABEL Karim Ellmann
 
-# Set environment variables for non-interactive installation
+# Set environment variables 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ Etc/UTC
 
 # Update the package list and install NUT and Apache
 RUN apt-get update && \
