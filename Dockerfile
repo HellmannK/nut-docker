@@ -22,7 +22,10 @@ RUN apt-get update && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
-    chown www-data:www-data /var/run/fcgiwrap
+    chown www-data:www-data /var/run/fcgiwrap && \
+    chown root:nut /dev/bus/usb/001/002 && \
+    chmod 660 /dev/bus/usb/001/002
+
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
