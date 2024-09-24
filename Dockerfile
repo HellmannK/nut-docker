@@ -40,5 +40,8 @@ COPY wol_clients.conf /opt/scripts/configs/wol_clients.conf
 # Make scripts executable
 RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
 
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
+
 # Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
