@@ -48,6 +48,22 @@ monitor_ups() {
     done
 }
 
+# Check if USB_DEVICE environment variable is set
+if [ -z "$USB_DEVICE" ]; then
+  echo "Error: USB_DEVICE environment variable is not set."
+  exit 1
+fi
+
+# Wait for the USB device to be available
+while [ ! -e $USB_DEVICE ]; do
+  echo "Waiting for USB device $USB_DEVICE to be available..."
+  sleep 1
+done
+
+# Set permissions for the USB device
+chown root:nut $USB_DEVICE
+chmod 660 $USB_DEVICE
+
 # Ensure WOL configuration files are in place
 CONFIGS_DIR="/opt/scripts/configs"
 SCRIPTS_DIR="/opt/scripts"
@@ -74,6 +90,7 @@ start_nut_server
 start_nut_monitor
 start_postfix
 start_fcgiwrap
+upsdrvctl start
 
 # Start UPS monitoring in the background
 monitor_ups &
