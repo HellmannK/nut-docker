@@ -64,6 +64,13 @@ if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
     exit 1
 fi
 
+# Copy /etc/nut to the target directory if it is empty
+TARGET_DIR="/home/admin/podman_volumes/nut-cgi-server/nut"
+if [ -d "$TARGET_DIR" ] && [ -z "$(ls -A "$TARGET_DIR")" ]; then
+  echo "Copying contents of /etc/nut to $TARGET_DIR"
+  cp -r /etc/nut/* "$TARGET_DIR"
+fi
+
 # Generate a file with the output of nut-scanner -U
 nut-scanner -U > /etc/nut/nut-scanner-output.txt
 
