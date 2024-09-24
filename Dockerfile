@@ -18,7 +18,9 @@ RUN apt-get update && \
     etherwake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /run/nut /opt/scripts/configs /var/run/fcgiwrap && \
+    mkdir -p /run/nut && \
+    mkdir -p /opt/scripts/configs && \
+    mkdir -p /var/run/fcgiwrap && \
     touch /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /etc/nut/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
