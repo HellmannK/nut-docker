@@ -27,7 +27,7 @@ start_postfix() {
 # Function to start fcgiwrap
 start_fcgiwrap() {
     echo "Starting fcgiwrap..."
-    /usr/sbin/fcgiwrap -s unix:/var/run/fcgiwrap.socket &
+    /etc/init.d/fcgiwrap start
 }
 
 # Function to monitor UPS and trigger WOL script
