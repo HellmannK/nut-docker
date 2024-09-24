@@ -30,24 +30,6 @@ start_fcgiwrap() {
     /etc/init.d/fcgiwrap start
 }
 
-# Function to monitor UPS and trigger WOL script
-monitor_ups() {
-    echo "Monitoring UPS status..."
-    while true; do
-        # Check the status of the UPS
-        STATUS=$(upsc ups@localhost ups.status || echo "UNKNOWN")
-        
-        # If mains is back, execute WOL script
-        if [ "$STATUS" == "OL" ]; then
-            echo "Mains is back, executing WOL script..."
-            /opt/scripts/wol.sh
-        fi
-        
-        # Sleep for a while before checking again
-        sleep 60
-    done
-}
-
 # Check if USB_DEVICE environment variable is set
 if [ -z "$USB_DEVICE" ]; then
   echo "Error: USB_DEVICE environment variable is not set."
@@ -91,9 +73,6 @@ start_nut_monitor
 start_postfix
 start_fcgiwrap
 upsdrvctl start
-
-# Start UPS monitoring in the background
-monitor_ups &
 
 # Start NGINX (this will keep the script running)
 start_nginx
