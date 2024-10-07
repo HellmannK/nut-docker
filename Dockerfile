@@ -26,6 +26,16 @@ RUN apt-get update && \
     chown www-data:www-data /etc/nut/upsset.conf && \
     mv /etc/nut/* /tmp/nut
 
+# Copy postfix configs to a temporary location
+RUN mkdir -p /tmp/postfix && \
+    touch /etc/postfix/sasl_passwd && \
+    touch /etc/postfix/sender_canonical && \
+    touch /etc/postfix/generic && \
+    mv /etc/postfix/main.cf /tmp/postfix/main.cf && \
+    mv /etc/postfix/sasl_passwd /tmp/postfix/sasl_passwd && \
+    mv /etc/postfix/sender_canonical /tmp/postfix/sender_canonical && \
+    mv /etc/postfix/generic /tmp/postfix/generic
+
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
 

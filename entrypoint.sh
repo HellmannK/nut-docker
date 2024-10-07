@@ -24,6 +24,12 @@ start_postfix() {
     /etc/init.d/postfix start
 }
 
+# Function to restart Postfix with updated configs
+restart_postfix() {
+    echo "Restarting Postfix..."
+    /etc/init.d/postfix restart
+}
+
 # Function to start fcgiwrap
 start_fcgiwrap() {
     echo "Starting fcgiwrap..."
@@ -71,17 +77,36 @@ if [ ! -f "$SCRIPTS_DIR/wol.sh" ]; then
 fi
 
 # Check if /etc/nut files exist, and copy them from /tmp/nut if they don't
-files=( hosts.conf nut.conf ups.conf upsd.conf upsd.users upsmon.conf upssched.conf upsset.conf	upsstats-single.html upsstats.html )
+nut_files=( hosts.conf nut.conf ups.conf upsd.conf upsd.users upsmon.conf upssched.conf upsset.conf upsstats-single.html upsstats.html )
 
-for i in "${files[@]}"
-  do
-    if [ ! -f /etc/nut/$i ]; then
-      cp /tmp/nut/$i /etc/nut/$i \
-      && echo "No existing $i found"
-    else
-      echo "Existing $i found, and will be used"
-    fi
-  done
+for i in "${nut_files[@]}"
+do
+  if [ ! -f /etc/nut/$i ]; then
+    cp /tmp/nut/$i /etc/nut/$i \
+    && echo "No existing $i found"
+  else
+    echo "Existing $i found, and will be used"
+  fi
+done
+
+# Check if /etc/postfix files exist, and copy them from /tmp/postfix if they don't
+postfix_files=( main.cf sasl_passwd sender_canonical generic )
+
+for i in "${postfix_files[@]}"
+do
+  if [ ! -f /etc/postfix/$i ]; then
+    cp /tmp/postfix/$i /etc/postfix/$i \
+    && echo "No existing $i found"
+  else
+    echo "Existing $i found, and will be used"
+  fi
+done
+
+# Generate postfix maps and restart postfix
+postmap /etc/postfix/sender_canonical
+postmap /etc/postfix/sasl_passwd
+postmap /etc/postfix/generic
+restart_postfix
 
 # Generate a file with the output of nut-scanner -U
 nut-scanner -U > /etc/nut/nut-scanner-output.txt
@@ -89,7 +114,6 @@ nut-scanner -U > /etc/nut/nut-scanner-output.txt
 # Start services
 start_nut_server
 start_nut_monitor
-start_postfix
 start_fcgiwrap
 start_upsdrvctl
 
