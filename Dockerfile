@@ -1,12 +1,15 @@
-# Networkupstools "nut" with mail-notification, nut-cgi and wol
-FROM debian:bookworm
-LABEL Karim Ellmann
+FROM debian:bookworm-slim
+LABEL author="Karim Ellmann"
 
 # Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ Etc/UTC
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Etc/UTC \
+    CONFIGS_DIR=/opt/scripts/configs \
+    SCRIPTS_DIR=/opt/scripts \
+    POSTFIX_DIR=/etc/postfix \
+    NUT_DIR=/etc/nut
 
-# Update the package list and install NUT and Apache
+# Update, install necessary packages and clean up
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     nut \
@@ -18,40 +21,36 @@ RUN apt-get update && \
     mailutils \
     etherwake && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /opt/scripts/configs /tmp/nut && \
-    touch /etc/nut/nut-scanner-output.txt && \
-    chown nut:nut /etc/nut/nut-scanner-output.txt && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Create necessary directories and set permissions
+RUN mkdir -p $CONFIGS_DIR /tmp/nut /tmp/postfix /run/nut && \
+    touch $NUT_DIR/nut-scanner-output.txt && \
+    chown nut:nut $NUT_DIR/nut-scanner-output.txt && \
     chown nut:nut /run/nut && \
-    chown www-data:www-data /etc/nut/upsset.conf && \
-    mv /etc/nut/* /tmp/nut
+    chown www-data:www-data $NUT_DIR/upsset.conf && \
+    mv $NUT_DIR/* /tmp/nut
 
 # Copy postfix configs to a temporary location
-RUN mkdir -p /tmp/postfix && \
-    touch /etc/postfix/sasl_passwd && \
-    touch /etc/postfix/sender_canonical && \
-    touch /etc/postfix/generic && \
-    mv /etc/postfix/main.cf /tmp/postfix/main.cf && \
-    mv /etc/postfix/sasl_passwd /tmp/postfix/sasl_passwd && \
-    mv /etc/postfix/sender_canonical /tmp/postfix/sender_canonical && \
-    mv /etc/postfix/generic /tmp/postfix/generic
+RUN touch $POSTFIX_DIR/sasl_passwd $POSTFIX_DIR/sender_canonical $POSTFIX_DIR/generic && \
+    mv $POSTFIX_DIR/main.cf /tmp/postfix/main.cf && \
+    mv $POSTFIX_DIR/sasl_passwd /tmp/postfix/sasl_passwd && \
+    mv $POSTFIX_DIR/sender_canonical /tmp/postfix/sender_canonical && \
+    mv $POSTFIX_DIR/generic /tmp/postfix/generic
 
 # Define exposed Ports
 EXPOSE 3493/tcp 9095/tcp
 
-# Copy static scripts
-COPY wol.sh /opt/scripts/wol.sh
+# Copy static scripts and configuration files
+COPY wol.sh $SCRIPTS_DIR/wol.sh
 COPY entrypoint.sh /usr/local/bin/
-
-# Copy configs
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY wol_clients.conf /opt/scripts/configs/wol_clients.conf
+COPY wol_clients.conf $CONFIGS_DIR/wol_clients.conf
 
 # Make scripts executable
-RUN chmod +x /usr/local/bin/entrypoint.sh /opt/scripts/wol.sh
-
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+RUN chmod +x /usr/local/bin/entrypoint.sh $SCRIPTS_DIR/wol.sh && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Set the entrypoint to the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
